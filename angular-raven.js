@@ -3,9 +3,14 @@
 
   module.provider('Raven', function() {
     var _development = null;
+    var _both = null;
 
     this.development = function(config) {
       _development = config || _development;
+      return this;
+    };
+    this.both = function(config) {
+      _both = config || _both;
       return this;
     };
 
@@ -14,23 +19,26 @@
         VERSION: ($window.Raven) ? $window.Raven.VERSION : 'development',
         TraceKit: ($window.Raven) ? $window.Raven.TraceKit : 'development',
         captureException: function captureException(exception, cause) {
-          if (_development) {
+          if (_development || _both) {
             $log.error('Raven: Exception ', exception, cause);
-          } else {
+          }
+          if (!_development || _both) {
             $window.Raven.captureException(exception, cause);
           }
         },
         captureMessage: function captureMessage(message, data) {
-          if (_development) {
+          if (_development || _both) {
             $log.error('Raven: Message ', message, data);
-          } else {
+          }
+          if (!_development || _both) {
             $window.Raven.captureMessage(message, data);
           }
         },
         setUser: function setUser(user) {
-          if (_development) {
+          if (_development || _both) {
             $log.info('Raven: User ', user);
-          } else {
+          }
+          if (!_development || _both) {
             if ($window.Raven.setUser) {
               $window.Raven.setUser(user);
             } else if ($window.Raven.setUserContext) {
@@ -39,9 +47,10 @@
           }
         },
         setUserContext: function setUserContext(user) {
-          if (_development) {
+          if (_development || _both) {
             $log.info('Raven: User ', user);
-          } else {
+          }
+          if (!_development || _both) {
             if ($window.Raven.setUser) {
               $window.Raven.setUserContext(user);
             } else if ($window.Raven.setUserContext) {
@@ -50,9 +59,10 @@
           }
         },
         lastException: function lastException() {
-          if (_development) {
+          if (_development || _both) {
             $log.error('Raven: Last Exception');
-          } else {
+          }
+          if (!_development || _both) {
             $window.Raven.lastException();
           }
         },
